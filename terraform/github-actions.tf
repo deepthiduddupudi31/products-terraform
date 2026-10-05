@@ -9,7 +9,7 @@ resource "azuread_application_federated_identity_credential" "github_actions" {
   ]
 
   issuer  = "https://token.actions.githubusercontent.com"
-  subject = "repo:deepthiduddupudi31/products-terraform:ref:refs/heads/main"
+  subject = "repo:deepthiduddupudi31@144576076/products-terraform@1404544725:ref:refs/heads/main"
 }
 
 resource "azurerm_role_assignment" "github_acr_push" {
