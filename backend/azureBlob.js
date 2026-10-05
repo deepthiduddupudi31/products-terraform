@@ -8,15 +8,47 @@ const containerName = "products";
 
 if (!storageAccountName) {
   throw new Error(
-    "AZURE_STORAGE_ACCOUNT_NAME is missing in .env"
+    "AZURE_STORAGE_ACCOUNT_NAME is missing in environment variables"
   );
 }
 
+// =====================================================
+// AZURE STORAGE CREDENTIAL
+// =====================================================
+
+let credential;
+
+// LOCAL DOCKER
+// Uses the temporary Azure CLI access token
+if (process.env.AZURE_ACCESS_TOKEN) {
+  credential = {
+    getToken: async () => ({
+      token: process.env.AZURE_ACCESS_TOKEN,
+      expiresOnTimestamp:
+        Number(process.env.AZURE_ACCESS_TOKEN_EXPIRES) ||
+        Date.now() + 30 * 60 * 1000,
+    }),
+  };
+
+  console.log("Using Azure CLI access token for Blob Storage");
+}
+
+// AZURE APP SERVICE
+// Uses System Assigned Managed Identity
+else {
+  credential = new DefaultAzureCredential();
+
+  console.log("Using DefaultAzureCredential for Blob Storage");
+}
+
+// =====================================================
+// BLOB SERVICE CLIENT
+// =====================================================
+
 const blobServiceClient = new BlobServiceClient(
   `https://${storageAccountName}.blob.core.windows.net`,
-  new DefaultAzureCredential()
+  credential
 );
-
 
 // =====================================================
 // 1. UPLOAD IMAGE FILE
@@ -50,7 +82,6 @@ async function uploadToBlob(file) {
 
   return blockBlobClient.url;
 }
-
 
 // =====================================================
 // 2. UPLOAD IMAGE FROM URL
@@ -102,7 +133,6 @@ async function uploadImageFromUrl(imageUrl) {
 
   return blockBlobClient.url;
 }
-
 
 // =====================================================
 // EXPORT

@@ -31,8 +31,7 @@ resource "azurerm_storage_account" "main" {
   location                 = azurerm_resource_group.main.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
-
-  min_tls_version = "TLS1_2"
+  min_tls_version          = "TLS1_2"
 }
 
 resource "azurerm_storage_container" "products" {
@@ -75,14 +74,12 @@ resource "azurerm_linux_web_app" "backend" {
     AZURE_STORAGE_ACCOUNT_NAME = azurerm_storage_account.main.name
   }
 }
+
 resource "azurerm_role_assignment" "backend_storage" {
   scope                = azurerm_storage_account.main.id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = azurerm_linux_web_app.backend.identity[0].principal_id
 }
-
-
-
 
 resource "azurerm_container_registry" "main" {
   name                = "registryterraformcontainer"
@@ -96,4 +93,12 @@ resource "azurerm_role_assignment" "backend_acr_pull" {
   scope                = azurerm_container_registry.main.id
   role_definition_name = "AcrPull"
   principal_id         = azurerm_linux_web_app.backend.identity[0].principal_id
+}
+
+resource "azuread_application" "github_actions" {
+  display_name = "terraform-github-actions"
+}
+
+resource "azuread_service_principal" "github_actions" {
+  client_id = azuread_application.github_actions.client_id
 }
