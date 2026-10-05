@@ -62,7 +62,8 @@ resource "azurerm_linux_web_app" "backend" {
     always_on = true
 
     application_stack {
-      node_version = "20-lts"
+       docker_image_name   = "registryterraformcontainer.azurecr.io/productapp-backend:latest"
+       docker_registry_url = "https://registryterraformcontainer.azurecr.io"
     }
   }
 
