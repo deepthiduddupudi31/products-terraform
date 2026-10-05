@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.json({
     success: true,
-    message: "ProductHub API is running on server successfully"
+    message: "ProductHub API is running successfully"
   });
 });
 
