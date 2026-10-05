@@ -11,7 +11,7 @@ permissions:
 
 env:
   ACR_NAME: registryterraformcontainer
-  IMAGE_NAME: productapp-backend
+  IMAGE_NAME: producthub-backend
   APP_NAME: terraformbackend
 
 jobs:
